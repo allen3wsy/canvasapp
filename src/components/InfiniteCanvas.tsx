@@ -4,6 +4,7 @@ import { Stage, Layer } from "react-konva";
 import Konva from "konva";
 import { useCanvasStore } from "@/store/canvasStore";
 import type { CanvasElement } from "@/types/canvas";
+import { registerStage } from "@/utils/stageExport";
 import DrawElementRenderer from "./elements/DrawElementRenderer";
 import RectangleElementRenderer from "./elements/RectangleElementRenderer";
 import CircleElementRenderer from "./elements/CircleElementRenderer";
@@ -52,6 +53,12 @@ export default function InfiniteCanvas() {
     updateSize();
     window.addEventListener("resize", updateSize);
     return () => window.removeEventListener("resize", updateSize);
+  }, []);
+
+  // Register stage for PNG export
+  useEffect(() => {
+    if (stageRef.current) registerStage(stageRef.current);
+    return () => registerStage(null);
   }, []);
 
   // Load from storage on mount

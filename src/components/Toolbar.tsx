@@ -16,8 +16,10 @@ import {
   ZoomIn,
   ZoomOut,
   RotateCcw,
+  Download,
 } from "lucide-react";
 import { useCanvasStore } from "@/store/canvasStore";
+import { exportStageToPng } from "@/utils/stageExport";
 import type { Tool } from "@/types/canvas";
 
 const tools: { id: Tool; icon: React.ReactNode; label: string }[] = [
@@ -47,6 +49,7 @@ export default function Toolbar() {
     setStageConfig,
     deleteSelected,
     selectedId,
+    setSelectedId,
     addElement,
     createImageElement,
     clearCanvas,
@@ -160,6 +163,16 @@ export default function Toolbar() {
       fileInputRef.current?.click();
     }
     setTool(toolId);
+  };
+
+  const handleExportPng = () => {
+    const prev = selectedId;
+    setSelectedId(null);
+    // Wait one frame for the transformer to unmount before capturing
+    requestAnimationFrame(() => {
+      exportStageToPng();
+      if (prev) setSelectedId(prev);
+    });
   };
 
   const zoomIn = () => {
@@ -316,6 +329,14 @@ export default function Toolbar() {
           className="p-1.5 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
         >
           <RotateCcw size={16} />
+        </button>
+        <div className="w-px h-5 bg-gray-200 mx-0.5" />
+        <button
+          title="Save as PNG"
+          onClick={handleExportPng}
+          className="p-2.5 rounded-lg text-white bg-blue-500 hover:bg-blue-600 transition-colors shadow-sm"
+        >
+          <Download size={22} />
         </button>
       </div>
 
